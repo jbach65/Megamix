@@ -12,27 +12,63 @@ def main():
     else:
         print("STOOOOOOOOOOOOOOP HOLD IT RIGHT THERE")
     print(solved)
-    # messy = twist(solved, 6, 'r')
-    # messy = twist(messy, 2, 'c')
-    # messy = twist(messy, 7, 'r')
-    # messy = twist(messy, 1, 'c')
-    # messy = twist(messy, 9, 'c')
-    # messy = twist(messy, 3, 'r')
-    # messy = twist(messy, 11, 'c')
-    # messy = twist(messy, 8, 'r')
-    # messy = twist(messy, 6, 'r')
-    # messy = twist(messy, 5, 'c')
-    # messy = twist(messy, 4, 'r')
-    # messy = twist(messy, 9, 'c')
-    # messy = twist(messy, 2, 'r')
-    # essy = twist(messy, 8, 'c')
-    # essy = twist(messy, 10, 'r')
-    messy = mess_it_up(solved, 15)
+    messy = solved[:]
+    messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
+    messy = twist(messy, 2, 'c')    # turn side 2 clockwise
+    messy = twist(messy, 0, 'c')    # turn side 0 clockwise
+    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = twist(messy, 7, 'c')    # turn side 7 clockwise
+    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
+    messy = twist(messy, 11, 'c')    # turn side b clockwise
+    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = twist(messy, 6, 'r')    # turn side 6 counter-clockwise
+    messy = twist(messy, 8, 'r')    # turn side 8 counter-clockwise
+    messy = twist(messy, 2, 'r')    # turn side 2 counter-clockwise
+    messy = twist(messy, 10, 'c')    # turn side a clockwise
+    messy = twist(messy, 11, 'r')    # turn side b counter-clockwise
+    messy = twist(messy, 3, 'r')    # turn side 3 counter-clockwise
+    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
+    messy = twist(messy, 7, 'c')    # turn side 7 clockwise
+    messy = twist(messy, 5, 'c')    # turn side 5 clockwise
+    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = twist(messy, 2, 'c')    # turn side 2 clockwise
+    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
+    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    messy = twist(messy, 8, 'r')    # turn side 8 counter-clockwise
+    messy = twist(messy, 0, 'c')    # turn side 0 clockwise
+    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
+    messy = twist(messy, 6, 'r')    # turn side 6 counter-clockwise
+    messy = twist(messy, 0, 'r')    # turn side 0 counter-clockwise
+    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
+    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
+    messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
+    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
+    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    messy = twist(messy, 1, 'r')    # turn side 1 counter-clockwise
+    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
+    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
+    messy = twist(messy, 3, 'r')    # turn side 3 counter-clockwise
+    messy = twist(messy, 9, 'c')    # turn side 9 clockwise
+    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = twist(messy, 2, 'c')    # turn side 2 clockwise
+    messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
+    messy = twist(messy, 8, 'r')    # turn side 8 counter-clockwise
+    messy = twist(messy, 7, 'r')    # turn side 7 counter-clockwise
+    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
+    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = twist(messy, 2, 'r')    # turn side 2 counter-clockwise
+    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    messy = twist(messy, 10, 'c')    # turn side a clockwise
+    messy = twist(messy, 10, 'c')    # turn side a clockwise
+    # messy = mess_it_up(solved, 50)
     # starting_h = heuristic(messy, solved)
     print(messy)
     messy = messy + ":" #separator between state and moves
     solved = solved + ":"
-    # gui(messy)
+    gui(messy)
     # visited = {}
     # queue1 = []
     # queue2 = []
@@ -117,7 +153,7 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
                 # print("queue length:", len(queue), end = "\r")
         current_messy = heapq.heappop(queue_messy)[1]
         current_solved = heapq.heappop(queue_solved)[1]
-        # print("messy queue length:", len(queue_messy), "solved queue length:", len(queue_solved), end = "\r")
+        print("visited_messy length:", len(visited_messy), "visited_solved length:", len(visited_solved), end = "\r")
     print("we fucking did it, bitch")
     print("messy queue length:", len(queue_messy), "solved queue length:", len(queue_solved))
 
@@ -269,7 +305,7 @@ def mess_it_up(curr, num_rotations):
         else:
             side_name = "b"
         # print("Turning side", side_name, full_names[direction])
-        print("solved = twist(solved, ", side_name, ", '", options[direction], "')", "\t# turn side ", side_name, " ", full_names[direction], sep = "")
+        print("messy = twist(messy, ", side, ", '", options[direction], "')", "\t# turn side ", side_name, " ", full_names[direction], sep = "")
         curr = twist(curr, side, options[direction])
     return curr
 
@@ -731,7 +767,7 @@ def heuristic(current, solved):
             dist = how_far(current[i], solved[i])
             total += dist
     # final = int(math.floor(total/15))
-    final = total/10
+    final = total/15
     return final
 
 def how_far(iz, needs_to_be):
