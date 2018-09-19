@@ -3,89 +3,40 @@ import math
 import random
 import heapq
 from pprint import pprint
+import sys
 
 def main():
+    #initializations
     directions = ['c', 'r']
-    solved = "0000000000#1111111111#2222222222#3333333333#4444444444#5555555555#6666666666#7777777777#8888888888#9999999999#aaaaaaaaaa#bbbbbbbbbb"
-    if len(solved) == 131:
-        print("Good To Go Captain")
-    else:
-        print("STOOOOOOOOOOOOOOP HOLD IT RIGHT THERE")
-    print(solved)
-    messy = solved[:]
-    messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
-    messy = twist(messy, 2, 'c')    # turn side 2 clockwise
-    messy = twist(messy, 0, 'c')    # turn side 0 clockwise
-    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = twist(messy, 7, 'c')    # turn side 7 clockwise
-    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
-    messy = twist(messy, 11, 'c')    # turn side b clockwise
-    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = twist(messy, 6, 'r')    # turn side 6 counter-clockwise
-    messy = twist(messy, 8, 'r')    # turn side 8 counter-clockwise
-    messy = twist(messy, 2, 'r')    # turn side 2 counter-clockwise
-    messy = twist(messy, 10, 'c')    # turn side a clockwise
-    messy = twist(messy, 11, 'r')    # turn side b counter-clockwise
-    messy = twist(messy, 3, 'r')    # turn side 3 counter-clockwise
-    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
-    messy = twist(messy, 7, 'c')    # turn side 7 clockwise
-    messy = twist(messy, 5, 'c')    # turn side 5 clockwise
-    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = twist(messy, 2, 'c')    # turn side 2 clockwise
-    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
-    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    messy = twist(messy, 8, 'r')    # turn side 8 counter-clockwise
-    messy = twist(messy, 0, 'c')    # turn side 0 clockwise
-    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
-    messy = twist(messy, 6, 'r')    # turn side 6 counter-clockwise
-    messy = twist(messy, 0, 'r')    # turn side 0 counter-clockwise
-    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
-    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
-    messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
-    messy = twist(messy, 6, 'c')    # turn side 6 clockwise
-    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    messy = twist(messy, 1, 'r')    # turn side 1 counter-clockwise
-    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
-    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
-    messy = twist(messy, 3, 'r')    # turn side 3 counter-clockwise
-    messy = twist(messy, 9, 'c')    # turn side 9 clockwise
-    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = twist(messy, 2, 'c')    # turn side 2 clockwise
-    messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
-    messy = twist(messy, 8, 'r')    # turn side 8 counter-clockwise
-    messy = twist(messy, 7, 'r')    # turn side 7 counter-clockwise
-    messy = twist(messy, 5, 'r')    # turn side 5 counter-clockwise
-    messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = twist(messy, 2, 'r')    # turn side 2 counter-clockwise
-    messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    messy = twist(messy, 10, 'c')    # turn side a clockwise
-    messy = twist(messy, 10, 'c')    # turn side a clockwise
-    # messy = mess_it_up(solved, 50)
-    # starting_h = heuristic(messy, solved)
-    print(messy)
-    messy = messy + ":" #separator between state and moves
-    solved = solved + ":"
-    gui(messy)
-    # visited = {}
-    # queue1 = []
-    # queue2 = []
-    # queue3 = []
-    # heapq.heappush(queue1, (starting_h, messy))
-    # heapq.heappush(queue2, (starting_h, messy))
-    # heapq.heappush(queue3, (starting_h, messy))
-    # banana_split_v1(queue1, solved, directions, visited)
-    # banana_split_v2(queue2, solved, directions, visited)
-    # banana_split_v3(queue3, solved, directions, visited)
     queue_messy = []
     queue_solved = []
     visited_messy = {}
     visited_solved = {}
+    solved = "0000000000#1111111111#2222222222#3333333333#4444444444#5555555555#6666666666#7777777777#8888888888#9999999999#aaaaaaaaaa#bbbbbbbbbb"
+    messy = solved[:]
+
+    # messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
+    # messy = twist(messy, 2, 'c')    # turn side 2 clockwise
+    # messy = twist(messy, 0, 'c')    # turn side 0 clockwise
+    # messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    # messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    # messy = twist(messy, 7, 'c')    # turn side 7 clockwise
+    # messy = twist(messy, 3, 'c')    # turn side 3 clockwise
+    # messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
+    # messy = twist(messy, 11, 'c')    # turn side b clockwise
+    # messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    messy = mess_it_up(solved, 5)
+    print(messy)
+    messy = messy + ":" #separator between state and moves
+    solved = solved + ":"
+    gui(messy)
     initial_heuristic = heuristic(messy, solved)
+
+    #pushing unsolved and solves states to their respective queues to prepare for solving function
     heapq.heappush(queue_messy, (initial_heuristic, messy))
     heapq.heappush(queue_solved, (initial_heuristic, solved))
+
+    #calling function to solve megamix. Are you ready for this??
     banana_split_v4(queue_messy, queue_solved, messy, solved, directions, visited_messy, visited_solved)
 
 def split_one(queue, current, solved, optional_directions):
@@ -109,8 +60,9 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
     current_solved = heapq.heappop(queue_solved)[1]
     can_probably_piece_it_together = False #flag letting me knoe if there has been a path found that needs to be retraced
     while(current_messy[0:131] != solved[0:131] and current_solved[0:131] != messy[0:131] and can_probably_piece_it_together == False):
-        # print("current_messy\t", current_messy)
+        # print("current_messy\t", current_messy) #prints out the state being evaluated
         # print("current_solved\t", current_solved)
+        depth = 0
         for i in range(0,12):
             for j in range(0,2):
                 if i < 10:
@@ -121,7 +73,9 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
                     side = "b"
                 new_state_messy = twist(current_messy, i, optional_directions[j]) + side + str(optional_directions[j]) #could optimize this by not passing the path in and just concatenating it back on the end
                 new_state_solved = twist(current_solved, i, optional_directions[j]) + side + str(optional_directions[j])
-                if new_state_messy[0:131] in visited_solved: #expanding messy side
+
+                #expanding messy side
+                if new_state_messy[0:131] in visited_solved:
                     can_probably_piece_it_together = True
                     print("Solution messy side:")
                     # print("new_state_messy", new_state_messy)
@@ -136,8 +90,10 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
                     visited_messy[new_state_messy[0:131]] = new_state_messy[132:]
                     # print(new_state_messy[0:131], end = "\r")
                 # print("queue length:", len(queue), end = "\r")
+
+                #expanding solved side
                 if can_probably_piece_it_together == False:
-                    if new_state_solved[0:131] in visited_messy: #expanding solved side
+                    if new_state_solved[0:131] in visited_messy:
                         can_probably_piece_it_together = True
                         print("Solution solved side:")
                         # print("new_state_solved", new_state_solved)
@@ -151,13 +107,13 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
                         heapq.heappush(queue_solved, (total_cost_solved, new_state_solved))
                         visited_solved[new_state_solved[0:131]] = new_state_solved[132:]
                 # print("queue length:", len(queue), end = "\r")
-        current_messy = heapq.heappop(queue_messy)[1]
+        current_messy = heapq.heappop(queue_messy)[1] #pops the one with the smappest heuristic+depth off the que to be evaluated next
         current_solved = heapq.heappop(queue_solved)[1]
         print("visited_messy length:", len(visited_messy), "visited_solved length:", len(visited_solved), end = "\r")
-    print("we fucking did it, bitch")
+    print("we did it, ")
     print("messy queue length:", len(queue_messy), "solved queue length:", len(queue_solved))
 
-def generate_solution(moves_from_messy, moves_from_solved, optional_directions):
+def generate_solution(moves_from_messy, moves_from_solved, optional_directions): #this ust takes the two paths, joins them together and prints the result in both a way that someone can follow and a way that I can copy and paste in my main function to test that exact rotation again
     print(moves_from_messy)
     print(moves_from_solved)
     name = {}
@@ -306,7 +262,7 @@ def mess_it_up(curr, num_rotations):
             side_name = "b"
         # print("Turning side", side_name, full_names[direction])
         print("messy = twist(messy, ", side, ", '", options[direction], "')", "\t# turn side ", side_name, " ", full_names[direction], sep = "")
-        curr = twist(curr, side, options[direction])
+        curr = twist(curr, side, options[direction]) #calls function that  actually does the rotation
     return curr
 
 def twist(curr, face, direction):
@@ -723,7 +679,7 @@ def twist(curr, face, direction):
     new = face_rotation(new, face, direction)
     return new
 
-def face_rotation(curr, face, direction):
+def face_rotation(curr, face, direction): #sice the face rotaions are all basically the same this function is called to handle those insead of writing them all out inside twist
     new = curr
     n = list(new)
     c = list(curr)
@@ -751,14 +707,6 @@ def face_rotation(curr, face, direction):
         n[11*face+9]=c[11*face+1]
     new = ''.join(n)
     return new
-    # if direction == 'c':
-    #     curr = curr[0:face*11] + curr[face*11+8:face*11+10] + curr[face*11:face*11+8] + "#" + curr[face*11 + 11:]
-    #
-    # elif direction == 'r':
-    #     curr = curr[0:face*11] + curr[face*11+2:face*11+10] + curr[face*11:face*11+2] + "#" + curr[face*11 + 11:]
-    # if face == 11:
-    #     curr = curr[:-1]
-    # return curr
 
 def heuristic(current, solved):
     total = 0
