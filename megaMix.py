@@ -6,6 +6,12 @@ from pprint import pprint
 import sys
 
 def main():
+    #takes in number of initial random turns as a command line argument, if none are given, it defaults to 8
+    num_random_turns = 8
+    if(len(sys.argv) == 2):
+        num_random_turns = int(sys.argv[1])
+        print("turning", num_random_turns, "times")
+
     #initializations
     directions = ['c', 'r']
     queue_messy = []
@@ -15,6 +21,8 @@ def main():
     solved = "0000000000#1111111111#2222222222#3333333333#4444444444#5555555555#6666666666#7777777777#8888888888#9999999999#aaaaaaaaaa#bbbbbbbbbb"
     messy = solved[:]
 
+    #here you can either specify your own turns or just use the random turn generator.
+    #if you want to test your own turns you can put them in the lines below
     # messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
     # messy = twist(messy, 2, 'c')    # turn side 2 clockwise
     # messy = twist(messy, 0, 'c')    # turn side 0 clockwise
@@ -25,11 +33,15 @@ def main():
     # messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
     # messy = twist(messy, 11, 'c')    # turn side b clockwise
     # messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    messy = mess_it_up(solved, 5)
+    messy = mess_it_up(solved, num_random_turns)
     print(messy)
     messy = messy + ":" #separator between state and moves
     solved = solved + ":"
-    gui(messy)
+
+    #if you want to see the gui for the mixed up state uncomment the line below
+    # gui(messy)
+
+    #gives and initial heuristic value below to base further calculations off of
     initial_heuristic = heuristic(messy, solved)
 
     #pushing unsolved and solves states to their respective queues to prepare for solving function
@@ -39,27 +51,21 @@ def main():
     #calling function to solve megamix. Are you ready for this??
     banana_split_v4(queue_messy, queue_solved, messy, solved, directions, visited_messy, visited_solved)
 
-def split_one(queue, current, solved, optional_directions):
-    depth = 1
-    for i in range(0,12):
-        for j in range(0,2):
-            if i < 10:
-                side = str(i)
-            elif i == 10:
-                side = "a"
-            else:
-                side = "b"
-            new_state = twist(current, i, optional_directions[j]) + ":" + side + str(optional_directions[j])
-            total_cost = int(heuristic(new_state, solved) + depth)
-            heapq.heappush(queue, (total_cost, new_state))
-    return queue
-
 def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_directions, visited_messy, visited_solved):
     print("Solving...")
-    current_messy = heapq.heappop(queue_messy)[1]
-    current_solved = heapq.heappop(queue_solved)[1]
+    nodes_expanded = 0
+    final_depth = 0
+    empty = ""
+    current_messy1 = heapq.heappop(queue_messy)
+    current_solved1 = heapq.heappop(queue_solved)
     can_probably_piece_it_together = False #flag letting me knoe if there has been a path found that needs to be retraced
-    while(current_messy[0:131] != solved[0:131] and current_solved[0:131] != messy[0:131] and can_probably_piece_it_together == False):
+    found_direct_path = False #flag letting me knoe if there has been a direct path found
+    if messy[0:131] == solved[0:131]:
+        print("already solved, you dont need me")
+        found_direct_path = True
+    while(found_direct_path == False and can_probably_piece_it_together == False):
+        current_messy = current_messy1[1]
+        current_solved = current_solved1[1]
         # print("current_messy\t", current_messy) #prints out the state being evaluated
         # print("current_solved\t", current_solved)
         depth = 0
@@ -71,67 +77,80 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
                     side = "a"
                 else:
                     side = "b"
-                new_state_messy = twist(current_messy, i, optional_directions[j]) + side + str(optional_directions[j]) #could optimize this by not passing the path in and just concatenating it back on the end
-                new_state_solved = twist(current_solved, i, optional_directions[j]) + side + str(optional_directions[j])
+                if can_probably_piece_it_together == False and found_direct_path == False:
+                    new_state_messy = twist(current_messy, i, optional_directions[j]) + side + str(optional_directions[j]) #could optimize this by not passing the path in and just concatenating it back on the end
+                    new_state_solved = twist(current_solved, i, optional_directions[j]) + side + str(optional_directions[j])
+                    nodes_expanded += 2
 
-                #expanding messy side
-                if new_state_messy[0:131] in visited_solved:
-                    can_probably_piece_it_together = True
-                    print("Solution messy side:")
-                    # print("new_state_messy", new_state_messy)
-                    # print("visited_solved[new_state_messy[0:131]]", visited_solved[new_state_messy[0:131]])
-                    generate_solution(new_state_messy[132:], visited_solved[new_state_messy[0:131]], optional_directions)
-                elif new_state_messy[0:131] in visited_messy:
-                    pass #prevents expanding the same nodes
-                else:
-                    depth = ( len(new_state_messy) - 132 ) / 2
-                    total_cost_messy = heuristic(new_state_messy, solved) + depth #takes heuristic and adds the "cost" of the current node
-                    heapq.heappush(queue_messy, (total_cost_messy, new_state_messy))
-                    visited_messy[new_state_messy[0:131]] = new_state_messy[132:]
-                    # print(new_state_messy[0:131], end = "\r")
-                # print("queue length:", len(queue), end = "\r")
-
-                #expanding solved side
-                if can_probably_piece_it_together == False:
-                    if new_state_solved[0:131] in visited_messy:
+                    #expanding messy side
+                    if new_state_messy[0:131] in visited_solved:
                         can_probably_piece_it_together = True
-                        print("Solution solved side:")
-                        # print("new_state_solved", new_state_solved)
-                        # print("visited_messy[new_state_solved[0:131]]", visited_messy[new_state_soved[0:131]])
-                        generate_solution(visited_messy[new_state_solved[0:131]], new_state_solved[132:], optional_directions)
-                    elif new_state_solved[0:131] in visited_solved:
+                        # print("new_state_messy", new_state_messy)
+                        # print("visited_solved[new_state_messy[0:131]]", visited_solved[new_state_messy[0:131]])
+                        final_depth = generate_solution(new_state_messy[132:], visited_solved[new_state_messy[0:131]], optional_directions)
+                    elif new_state_messy[0:131] == solved[0:131]:
+                        found_direct_path = True
+                        final_depth = generate_solution(new_state_messy[132:], empty, optional_directions)
+                    elif new_state_messy[0:131] in visited_messy:
                         pass #prevents expanding the same nodes
                     else:
-                        depth = ( len(new_state_solved) - 132 ) / 2
-                        total_cost_solved = heuristic(new_state_solved, messy) + depth #takes heuristic and adds the "cost" of the current node
-                        heapq.heappush(queue_solved, (total_cost_solved, new_state_solved))
-                        visited_solved[new_state_solved[0:131]] = new_state_solved[132:]
-                # print("queue length:", len(queue), end = "\r")
-        current_messy = heapq.heappop(queue_messy)[1] #pops the one with the smappest heuristic+depth off the que to be evaluated next
-        current_solved = heapq.heappop(queue_solved)[1]
-        print("visited_messy length:", len(visited_messy), "visited_solved length:", len(visited_solved), end = "\r")
-    print("we did it, ")
-    print("messy queue length:", len(queue_messy), "solved queue length:", len(queue_solved))
+                        depth = ( len(new_state_messy) - 132 ) / 2
+                        total_cost_messy = heuristic(new_state_messy, solved) + depth #takes heuristic and adds the "cost" of the current node
+                        heapq.heappush(queue_messy, (total_cost_messy, new_state_messy))
+                        visited_messy[new_state_messy[0:131]] = new_state_messy[132:]
+
+                    #expanding solved side
+                    if can_probably_piece_it_together == False and found_direct_path == False:
+                        if new_state_solved[0:131] in visited_messy:
+                            can_probably_piece_it_together = True
+                            final_depth = generate_solution(visited_messy[new_state_solved[0:131]], new_state_solved[132:], optional_directions)
+                        elif new_state_solved[0:131] == messy[0:131]:
+                            found_direct_path = True
+                            final_depth = generate_solution(empty, new_state_solved[132:], optional_directions)
+                        elif new_state_solved[0:131] in visited_solved:
+                            pass #prevents expanding the same nodes
+                        else:
+                            depth = ( len(new_state_solved) - 132 ) / 2
+                            total_cost_solved = heuristic(new_state_solved, messy) + depth #takes heuristic and adds the "cost" of the current node
+                            heapq.heappush(queue_solved, (total_cost_solved, new_state_solved))
+                            visited_solved[new_state_solved[0:131]] = new_state_solved[132:]
+        if can_probably_piece_it_together == False and found_direct_path == False:
+            current_messy1 = heapq.heappop(queue_messy) #pops the one with the smappest heuristic+depth off the que to be evaluated next
+            current_solved1= heapq.heappop(queue_solved)
+        print("nodes expanded:\t", nodes_expanded, "\tdepth:", int(depth), end = "\r")
+    # empty = ""
+    # if current_messy1[1][0:131] == solved[0:131]:
+    #     print(generate_solution(current_messy1[1][0:131], empty, optional_directions))
+    # elif current_solved1[1][0:131] != messy[0:131]:
+    #     print(generate_solution(empty, current_solved1[1][0:131], optional_directions))
+    print("messy queue length:", len(queue_messy), "solved queue length:", len(queue_solved), "depth:", final_depth, "nodes_expanded:", nodes_expanded)
 
 def generate_solution(moves_from_messy, moves_from_solved, optional_directions): #this ust takes the two paths, joins them together and prints the result in both a way that someone can follow and a way that I can copy and paste in my main function to test that exact rotation again
-    print(moves_from_messy)
-    print(moves_from_solved)
+    depth = 0
+    # print("heres what im getting from messy", moves_from_messy)
+    # print("heres what im getting from solved", moves_from_solved)
+    print("Solution:                                                         ")
     name = {}
     name['c'] = "clockwise"
     name['r'] = "counter-clockwise"
     moves = int(len(moves_from_messy)/2)
-    for i in range(moves):
-        # print("turn side", moves_from_messy[i*2], name[moves_from_messy[i*2+1]])
-        print("solved = twist(solved, ", moves_from_messy[i*2], ", '", moves_from_messy[i*2+1], "')", "\t# turn side ", moves_from_messy[i*2], " ", name[moves_from_messy[i*2+1]], sep = "")
+    depth += moves
+    if moves > 0:
+        for i in range(moves):
+            # print("turn side", moves_from_messy[i*2], name[moves_from_messy[i*2+1]])
+            print("messy = twist(messy, ", moves_from_messy[i*2], ", '", moves_from_messy[i*2+1], "')", "\t# turn side ", moves_from_messy[i*2], " ", name[moves_from_messy[i*2+1]], sep = "")
     moves = int(len(moves_from_solved)/2)
-    for i in range(moves):
-        fake_direction = moves_from_solved[moves*2-i*2-1] #starts at last char and goes back in twos
-        if fake_direction == 'c': #needs to turn the opposite direction
-            real_direction = 'r'
-        else:
-            real_direction = 'c'
-        # print("turn side", moves_from_solved[moves-i*2], name[real_direction])
-        print("solved = twist(solved, ", moves_from_solved[moves*2-i*2-2], ", '", real_direction, "')", "\t# turn side ", moves_from_solved[moves-i*2], " ", name[real_direction], sep = "")
+    depth += moves
+    if moves > 0:
+        for i in range(moves):
+            fake_direction = moves_from_solved[moves*2-i*2-1] #starts at last char and goes back in twos
+            if fake_direction == 'c': #needs to turn the opposite direction
+                real_direction = 'r'
+            else:
+                real_direction = 'c'
+            # print("turn side", moves_from_solved[moves-i*2], name[real_direction])
+            print("messy = twist(messy, ", moves_from_solved[moves*2-i*2-2], ", '", real_direction, "')", "\t# turn side ", moves_from_solved[moves*2-i*2-2], " ", name[real_direction], sep = "")
+    return int(depth)
 
 def banana_split_v3(queue, goal, optional_directions, visited):
     current = heapq.heappop(queue)[1]
@@ -205,7 +224,7 @@ def banana_split_v1(queue, goal, optional_directions, visited):
     print("we fucking did it, bitch")
     print("queue length:", len(queue))
 
-def banana_split(queue, goal, optional_directions):
+def banana_split_original(queue, goal, optional_directions):
     current = heapq.heappop(queue)[1]
     if current[0:131] == goal[0:131]:
         print(current)
@@ -714,7 +733,7 @@ def heuristic(current, solved):
         if current[i] != solved[i]:
             dist = how_far(current[i], solved[i])
             total += dist
-    # final = int(math.floor(total/15))
+    # final = int(math.floor(total/15)) #playes around with only using whole numbers for the heuristic value but it was more accurate when it could tell exactly what the best path was instead of llumping them in with the other paths that had the same whole number heuristic value
     final = total/15
     return final
 
