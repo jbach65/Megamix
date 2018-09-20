@@ -26,13 +26,8 @@ def main():
     # messy = twist(messy, 4, 'r')    # turn side 4 counter-clockwise
     # messy = twist(messy, 2, 'c')    # turn side 2 clockwise
     # messy = twist(messy, 0, 'c')    # turn side 0 clockwise
-    # messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    # messy = twist(messy, 8, 'c')    # turn side 8 clockwise
-    # messy = twist(messy, 7, 'c')    # turn side 7 clockwise
-    # messy = twist(messy, 3, 'c')    # turn side 3 clockwise
-    # messy = twist(messy, 9, 'r')    # turn side 9 counter-clockwise
-    # messy = twist(messy, 11, 'c')    # turn side b clockwise
-    # messy = twist(messy, 8, 'c')    # turn side 8 clockwise
+    # etc...
+    
     messy = mess_it_up(solved, num_random_turns)
     print(messy)
     messy = messy + ":" #separator between state and moves
@@ -53,13 +48,14 @@ def main():
 
 def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_directions, visited_messy, visited_solved):
     print("Solving...")
+
     nodes_expanded = 0
     final_depth = 0
-    empty = ""
     current_messy1 = heapq.heappop(queue_messy)
     current_solved1 = heapq.heappop(queue_solved)
     can_probably_piece_it_together = False #flag letting me knoe if there has been a path found that needs to be retraced
     found_direct_path = False #flag letting me knoe if there has been a direct path found
+
     if messy[0:131] == solved[0:131]:
         print("already solved, you dont need me")
         found_direct_path = True
@@ -112,18 +108,15 @@ def banana_split_v4(queue_messy, queue_solved, messy, solved, optional_direction
                         else:
                             depth = ( len(new_state_solved) - 132 ) / 2
                             total_cost_solved = heuristic(new_state_solved, messy) + depth #takes heuristic and adds the "cost" of the current node
-                            heapq.heappush(queue_solved, (total_cost_solved, new_state_solved))
+                            heapq.heappush(queue_solved, (total_cost_solved, new_state_solved)) #pushing onto the queue
                             visited_solved[new_state_solved[0:131]] = new_state_solved[132:]
+
         if can_probably_piece_it_together == False and found_direct_path == False:
             current_messy1 = heapq.heappop(queue_messy) #pops the one with the smappest heuristic+depth off the que to be evaluated next
             current_solved1= heapq.heappop(queue_solved)
+
         print("nodes expanded:\t", nodes_expanded, "\tdepth:", int(depth), end = "\r")
-    # empty = ""
-    # if current_messy1[1][0:131] == solved[0:131]:
-    #     print(generate_solution(current_messy1[1][0:131], empty, optional_directions))
-    # elif current_solved1[1][0:131] != messy[0:131]:
-    #     print(generate_solution(empty, current_solved1[1][0:131], optional_directions))
-    print("messy queue length:", len(queue_messy), "solved queue length:", len(queue_solved), "depth:", final_depth, "nodes_expanded:", nodes_expanded)
+    print("depth:", final_depth, "nodes_expanded:", nodes_expanded)
 
 def generate_solution(moves_from_messy, moves_from_solved, optional_directions): #this ust takes the two paths, joins them together and prints the result in both a way that someone can follow and a way that I can copy and paste in my main function to test that exact rotation again
     depth = 0
@@ -135,12 +128,14 @@ def generate_solution(moves_from_messy, moves_from_solved, optional_directions):
     name['r'] = "counter-clockwise"
     moves = int(len(moves_from_messy)/2)
     depth += moves
+
     if moves > 0:
         for i in range(moves):
             # print("turn side", moves_from_messy[i*2], name[moves_from_messy[i*2+1]])
             print("messy = twist(messy, ", moves_from_messy[i*2], ", '", moves_from_messy[i*2+1], "')", "\t# turn side ", moves_from_messy[i*2], " ", name[moves_from_messy[i*2+1]], sep = "")
     moves = int(len(moves_from_solved)/2)
     depth += moves
+
     if moves > 0:
         for i in range(moves):
             fake_direction = moves_from_solved[moves*2-i*2-1] #starts at last char and goes back in twos
@@ -150,6 +145,7 @@ def generate_solution(moves_from_messy, moves_from_solved, optional_directions):
                 real_direction = 'c'
             # print("turn side", moves_from_solved[moves-i*2], name[real_direction])
             print("messy = twist(messy, ", moves_from_solved[moves*2-i*2-2], ", '", real_direction, "')", "\t# turn side ", moves_from_solved[moves*2-i*2-2], " ", name[real_direction], sep = "")
+
     return int(depth)
 
 def banana_split_v3(queue, goal, optional_directions, visited):

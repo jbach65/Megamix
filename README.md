@@ -15,7 +15,7 @@ Heuristic:
 How to Run:
     Use "python3 megaMix.py <number of randomizations>" to run the program for a given number of randomizations. If no number is provided it will default to 8.
 
-    the program begins by initializing a solved megamix. It then performs the provided number of random initial turns, and calls the solving function banana_split_v4() and when complete, prints the results in a form that can be easily read and checked if needed. Also once solved it prints out the number of nodes expanded and the depth at which the solution was found.
+    The program begins by initializing a solved megamix. It then performs the provided number of random initial turns, and calls the solving function banana_split_v4() and when complete, prints the results in a form that can be easily read and checked if needed. Also once solved it prints out the number of nodes expanded and the depth at which the solution was found.
 
 Data Types:
     I tried to make my data type as simple and small as possible. I decided to use strings to hold the current combination and numbers(plus a and b) to signify colors and sides. That meant that when I went to perform a twist I simply swapped indexes of the string, determined by hardcoded rules based on the megamix's structure. The only other data structures I used were dictionaries to hold the combinations already visited, with the key being the combination and the value being the path traversed to get there.
